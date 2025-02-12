@@ -1,0 +1,4 @@
+registration:
+  css:
+    theme:
+      css/registration.css: {}

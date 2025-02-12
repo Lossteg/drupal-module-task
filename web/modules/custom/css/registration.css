@@ -1,0 +1,87 @@
+.event-page {
+  font-family: 'Arial', sans-serif;
+}
+
+.event-header {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.event-title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: black;
+  margin: 0;
+}
+.event-status {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
+  width: fit-content;
+  height: fit-content;
+  padding: 2px 10px;
+  margin-top: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.event-status.active {
+  background-color: #2ecc71;
+}
+.event-status.closed {
+  background-color: #e74c3c;
+}
+
+.event-details {
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+.event-details p {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  color: #333;
+}
+.event-details strong {
+  color: #191919;
+  margin-bottom: 5px;
+}
+.event-details span {
+  color: #333;
+  font-weight: normal;
+}
+
+/*.registration-section {*/
+/*  text-align: center;*/
+/*}*/
+.register-event-button {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.register-event-button:hover {
+  background-color: #0056b3;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.register-event-button:active {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.login-message {
+  font-size: 1rem;
+  color: #dc3545;
+  font-weight: normal;
+  margin-top: 10px;
+}
