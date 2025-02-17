@@ -1,0 +1,11 @@
+registration:
+  css:
+    theme:
+      css/registration.css: {}
+  js:
+    js/registration.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+    - core/drupal.ajax

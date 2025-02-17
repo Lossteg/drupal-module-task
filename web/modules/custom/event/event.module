@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+function event_theme() : array {
+  return [
+    'event_page' => [
+      'variables' => [
+        'event' => '',
+        'is_logged_in' => '',
+        'registration_status' => '',
+        'registration_message' => '',
+        'register_button' => '',
+      ],
+    ],
+  ];
+}
