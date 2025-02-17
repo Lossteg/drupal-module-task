@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\event\Service\Registration;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -14,7 +15,7 @@ use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 /**
  * Provides services for event registration.
  */
-final class EventRegisterService implements EventRegisterServiceInterface{
+final class EventRegisterService implements EventRegisterServiceInterface {
 
   use MessengerTrait;
 
@@ -47,6 +48,13 @@ final class EventRegisterService implements EventRegisterServiceInterface{
   protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
+   * The date formatter.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected DateFormatterInterface $dateFormatter;
+
+  /**
    * Constructs a new EventRegisterService object.
    *
    * @param \Drupal\Core\Database\Connection $database
@@ -57,17 +65,20 @@ final class EventRegisterService implements EventRegisterServiceInterface{
    *   The entity type manager.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
    *   The cache tags invalidator service.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    */
   public function __construct(
     Connection $database,
     AccountProxyInterface $current_user,
     EntityTypeManagerInterface $entity_type_manager,
-    CacheTagsInvalidatorInterface $cache_tags_invalidator
+    CacheTagsInvalidatorInterface $cache_tags_invalidator,
+    DateFormatterInterface $date_formatter
   ) {
     $this->database = $database;
     $this->currentUser = $current_user;
     $this->entityTypeManager = $entity_type_manager;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
+    $this->dateFormatter = $date_formatter;
   }
 
   /**
@@ -210,4 +221,42 @@ final class EventRegisterService implements EventRegisterServiceInterface{
       ];
     }
   }
+
+  /**
+   * Gets list of registered users for the event.
+   *
+   * @param \Drupal\node\NodeInterface $event
+   *   The event node.
+   *
+   * @return array
+   *   Array of registered users with their details.
+   */
+  public function getRegisteredUsers(NodeInterface $event) : array {
+    $query = $this->database->select('event_registrations', 'er')
+      ->fields('u', ['uid', 'name', 'mail'])
+      ->fields('er', ['created'])
+      ->condition('er.event_id', $event->id())
+      ->orderBy('er.created', 'DESC');
+
+    $query->join(
+      'users_field_data',
+      'u',
+      'er.user_id = u.uid'
+    );
+
+    $registrations = $query->execute()->fetchAll();
+
+    return array_map(function($record) {
+      return [
+        'uid' => $record->uid,
+        'name' => $record->name,
+        'email' => $record->mail,
+        'registered' => $this->dateFormatter->format(
+          $record->created,
+          'medium'
+        ),
+      ];
+    }, $registrations);
+  }
+
 }

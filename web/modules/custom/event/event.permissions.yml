@@ -1,0 +1,4 @@
+access event participants:
+  title: 'Access event participants list'
+  description: 'Allow admins to view the list of event participants'
+  restrict access: true

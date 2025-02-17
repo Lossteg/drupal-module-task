@@ -62,4 +62,21 @@ interface EventRegisterServiceInterface {
    *   - 'message' (string): A message explaining the result.
    */
   public function register(NodeInterface $event): array;
+
+  /**
+   * Retrieves a list of registered users for a given event.
+   *
+   * @param \Drupal\node\NodeInterface $event
+   *   The event node.
+   *
+   * @return array
+   *   An array of associative arrays, each representing a registered user.
+   *   Each user array contains the following keys:
+   *   - 'uid': The user ID.
+   *   - 'name': The user's name.
+   *   - 'email': The user's email address.
+   *   - 'registered': The formatted date and time of registration.
+   */
+  public function getRegisteredUsers(NodeInterface $event) : array;
+
 }
