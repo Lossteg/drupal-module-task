@@ -7,9 +7,11 @@ namespace Drupal\event\Controller;
 use Drupal\address\Repository\CountryRepository;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\event\Service\Registration\EventRegisterService;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Provides a controller for event.event_page route.
@@ -21,14 +23,21 @@ class EventRegisterController extends ControllerBase {
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
-  protected DateFormatterInterface $dateFormatter;
+  protected $dateFormatter;
 
   /**
    * The country repository.
    *
    * @var \Drupal\address\Repository\CountryRepository
    */
-  protected CountryRepository $countryRepository;
+  protected $countryRepository;
+
+  /**
+   * The event registration service.
+   *
+   * @var \Drupal\event\Service\Registration\EventRegisterService
+   */
+  protected $eventRegistration;
 
   /**
    * Constructs a new EventRegisterController object.
@@ -40,10 +49,12 @@ class EventRegisterController extends ControllerBase {
    */
   public function __construct(
     DateFormatterInterface $date_formatter,
-    CountryRepository $country_repository
+    CountryRepository $country_repository,
+    EventRegisterService  $event_registration
   ) {
     $this->dateFormatter = $date_formatter;
     $this->countryRepository = $country_repository;
+    $this->eventRegistration = $event_registration;
   }
 
   /**
@@ -52,11 +63,22 @@ class EventRegisterController extends ControllerBase {
   public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('date.formatter'),
-      $container->get('address.country_repository')
+      $container->get('address.country_repository'),
+      $container->get('event.registration')
     );
   }
 
-  private function formatDate(string $date): string {
+  /**
+   * Formats a date string into a human-readable format.
+   *
+   * @param string $date
+   *   The date string to format.
+   *
+   * @return string
+   *   The formatted date in "d F Y H:i" format.
+   */
+  private function formatDate(string $date): string
+  {
     return $this->dateFormatter->format(
       strtotime($date),
       'custom',
@@ -65,13 +87,17 @@ class EventRegisterController extends ControllerBase {
   }
 
   /**
-   * Formats WKT POINT coordinates into a readable format.
+   * Formats WKT POINT coordinates into a human-readable format.
+   *
+   * Takes a Well-Known Text (WKT) POINT string (e.g., "POINT (30.5 50.2)")
+   * and converts it into a more readable format with latitude and longitude.
    *
    * @param string $coordinates
    *   The WKT POINT coordinates string.
    *
    * @return string
-   *   Formatted coordinates string or empty string if invalid input.
+   *   A formatted string representation of the coordinates,
+   *   e.g., "50.2° N, 30.5° E".
    */
   private function formatCoordinates(string $coordinates): string {
     if (empty($coordinates)) {
@@ -117,15 +143,30 @@ class EventRegisterController extends ControllerBase {
   }
 
   /**
-   * Builds the response.
+   * Handles user registration for an event and returns a JSON response.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The event node.
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   A JSON response containing the registration status and message.
+   */
+  public function register(NodeInterface $node): JSONResponse {
+    $result = $this->eventRegistration->register($node);
+
+    return new JsonResponse($result);
+  }
+
+  /**
+   * Builds the response.
+   *
+   * @param NodeInterface $node
    *   The node ID.
    *
    * @return array
    *   A render array.
    */
-  public function build(NodeInterface $node): array {
+  public function build(NodeInterface $node = NULL): array {
     $eventData = [
       'nid' => $node->id(),
       'title' => $node->getTitle(),
@@ -138,28 +179,45 @@ class EventRegisterController extends ControllerBase {
       'coordinates' => $this->formatCoordinates($node->get('field_coordinates')->value),
     ];
 
-    $isLoggedIn = $this->currentUser()->isAuthenticated();
-
     $build = [
       '#theme' => 'event_page',
-      '#attached' => [
-        'library' => ['event/registration'],
-      ],
+      '#attached' => ['library' => ['event/registration']],
       '#event' => $eventData,
-      '#is_logged_in' => $isLoggedIn,
+      '#is_logged_in' => $this->currentUser()->isAuthenticated(),
+      '#cache' => [
+        'contexts' => ['user'],
+        'tags' => [
+          'node:' . $node->id(),
+          'event_registration:' . $node->id(),
+        ],
+      ],
     ];
 
-    if ($isLoggedIn) {
+    if (!$build['#is_logged_in']) {
+      $build['#registration_message'] = [
+        '#markup' => $this->t('You must be logged in to register for this event.')
+      ];
+      return $build;
+    }
+
+    $userId = (int) $this->currentUser()->id();
+    $registrationStatus = $this->eventRegistration->getRegistrationStatus($node, $userId);
+
+    $build['#registration_status'] = $registrationStatus['status'];
+
+    if (!$registrationStatus['status']) {
+      $build['#registration_message'] = [
+        '#markup' => $registrationStatus['message'],
+      ];
+    } else {
       $build['#register_button'] = [
         '#type' => 'link',
         '#title' => $this->t('Register for event'),
-        '#url' => Url::fromRoute('event.event_page', ['id' => $node->id()]),
+        '#url' => Url::fromRoute('event.register', ['node' => $node->id()]),
         '#attributes' => [
           'class' => ['button', 'register-event-button'],
         ],
       ];
-    } else {
-      $build['#login_message'] = $this->t('You must be logged in to register for the event.');
     }
 
     return $build;

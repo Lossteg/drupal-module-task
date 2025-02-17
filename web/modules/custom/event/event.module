@@ -8,6 +8,9 @@ function event_theme() : array {
       'variables' => [
         'event' => '',
         'is_logged_in' => '',
+        'registration_status' => '',
+        'registration_message' => '',
+        'register_button' => '',
       ],
     ],
   ];

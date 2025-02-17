@@ -34,6 +34,7 @@
 }
 .event-status.closed {
   background-color: #e74c3c;
+  pointer-events: none;
 }
 
 .event-details {
@@ -55,9 +56,6 @@
   font-weight: normal;
 }
 
-/*.registration-section {*/
-/*  text-align: center;*/
-/*}*/
 .register-event-button {
   display: inline-block;
   padding: 12px 24px;
@@ -79,9 +77,24 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.login-message {
-  font-size: 1rem;
-  color: #dc3545;
-  font-weight: normal;
+.registration-message {
+  display: inline-block;
+  padding: 12px 24px;
+  border: #6a984f 1px solid;
+  border-radius: 4px;
+  background-color: #bbec8d;
+  font-size: 1.25rem;
+  font-weight: 700;
   margin-top: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.registration-message.success {
+  background-color: #e3fcec;
+  color: #146c43;
+  border: 1px solid #20c997;
+}
+.registration-message.error {
+  background-color: #ffe3e3;
+  color: #842029;
+  border: 1px solid #dc3545;
 }

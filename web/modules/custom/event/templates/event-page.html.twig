@@ -4,7 +4,7 @@
       {{ event.title }}
     </h1>
     <span class="event-status {{ event.status|lower }}">
-    {{ event.status }}
+      {{ event.status }}
     </span>
   </header>
   <section class="event-details">
@@ -48,12 +48,11 @@
     </p>
   </section>
   <div class="registration-section">
-    {% if is_logged_in %}
-      <button class="register-event-button" data-event-id="{{ event.nid }}">
-        Register for event
-      </button>
+    {% if is_logged_in and registration_status is same as(TRUE) %}
+      {{ register_button }}
+      <div class="registration-message" style="display: none;"></div>
     {% else %}
-      <p class="login-message">{{ login_message }}</p>
+      <p class="registration-message error">{{ registration_message }}</p>
     {% endif %}
   </div>
 </div>
