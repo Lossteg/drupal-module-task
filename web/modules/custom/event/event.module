@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/*
+ * Implements hook_theme().
+ */
 function event_theme() : array {
   return [
     'event_page' => [
@@ -20,4 +23,11 @@ function event_theme() : array {
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_cron().
+ */
+function event_cron() : void {
+  \Drupal::service('event.event_status_cron')->run();
 }

@@ -1,4 +1,16 @@
 services:
   event.registration:
     class: 'Drupal\event\Service\Registration\EventRegisterService'
-    arguments: ['@database', '@current_user', '@entity_type.manager', '@cache_tags.invalidator', '@date.formatter']
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@entity_type.manager'
+      - '@cache_tags.invalidator'
+      - '@date.formatter'
+
+  event.event_status_cron:
+    class: 'Drupal\event\Cron\EventStatusCron'
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+      - '@logger.channel.cron'
