@@ -55,4 +55,9 @@
       <p class="registration-message error">{{ registration_message }}</p>
     {% endif %}
   </div>
+  {% if participants_link %}
+    <div class="participants-section">
+      {{ participants_link }}
+    </div>
+  {% endif %}
 </div>

@@ -1,4 +1,4 @@
 services:
   event.registration:
     class: 'Drupal\event\Service\Registration\EventRegisterService'
-    arguments: ['@database', '@current_user', '@entity_type.manager', '@cache_tags.invalidator']
+    arguments: ['@database', '@current_user', '@entity_type.manager', '@cache_tags.invalidator', '@date.formatter']

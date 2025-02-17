@@ -158,6 +158,34 @@ class EventRegisterController extends ControllerBase {
   }
 
   /**
+   * Returns a render array for the event participants list.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The event node.
+   *
+   * @return array
+   *   A render array.
+   */
+  public function participants(NodeInterface $node): array {
+    $participants = $this->eventRegistration->getRegisteredUsers($node);
+
+    return [
+      '#theme' => 'event_participants',
+      '#attached' => ['library' => ['event/registration']],
+      '#event' => [
+        'title' => $node->getTitle(),
+        'participants' => $participants,
+      ],
+      '#cache' => [
+        'tags' => [
+          'node:' . $node->id(),
+          'event_registration:' . $node->id(),
+        ],
+      ],
+    ];
+  }
+
+  /**
    * Builds the response.
    *
    * @param NodeInterface $node
@@ -216,6 +244,17 @@ class EventRegisterController extends ControllerBase {
         '#url' => Url::fromRoute('event.register', ['node' => $node->id()]),
         '#attributes' => [
           'class' => ['button', 'register-event-button'],
+        ],
+      ];
+    }
+
+    if ($this->currentUser()->hasPermission('access event participants')) {
+      $build['#participants_link'] = [
+        '#type' => 'link',
+        '#title' => $this->t('View Participants'),
+        '#url' => Url::fromRoute('event.participants', ['node' => $node->id()]),
+        '#attributes' => [
+          'class' => ['button', 'view-participants-button'],
         ],
       ];
     }

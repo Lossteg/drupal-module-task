@@ -11,6 +11,12 @@ function event_theme() : array {
         'registration_status' => '',
         'registration_message' => '',
         'register_button' => '',
+        'participants_link' => '',
+      ],
+    ],
+    'event_participants' => [
+      'variables' => [
+        'event' => '',
       ],
     ],
   ];

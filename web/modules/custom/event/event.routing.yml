@@ -28,3 +28,18 @@ event.register:
         type: entity:node
       bundle:
         - event
+
+event.participants:
+  path: '/events/{node}/participants'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventRegisterController::participants'
+    _title: 'Event Participants'
+  requirements:
+    _permission: 'access event participants'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+      bundle:
+        - event
