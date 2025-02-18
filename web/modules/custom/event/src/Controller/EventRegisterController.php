@@ -192,10 +192,7 @@ class EventRegisterController extends ControllerBase {
         'participants' => $participants,
       ],
       '#cache' => [
-        'tags' => [
-          'node:' . $node->id(),
-          'event_registration:' . $node->id(),
-        ],
+        'max-age' => 0,
       ],
     ];
   }
