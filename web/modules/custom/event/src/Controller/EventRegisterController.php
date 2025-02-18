@@ -8,6 +8,7 @@ use Drupal\address\Repository\CountryRepository;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\event\Service\Registration\EventRegisterService;
+use Drupal\event\Service\Weather\WeatherService;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -40,21 +41,34 @@ class EventRegisterController extends ControllerBase {
   protected $eventRegistration;
 
   /**
+   * The WeatherAPI service.
+   *
+   * @var \Drupal\event\Service\Weather\WeatherService
+   */
+  protected $weatherService;
+
+  /**
    * Constructs a new EventRegisterController object.
    *
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    * @param \Drupal\address\Repository\CountryRepository $country_repository
    *   The country repository service.
+   * @param \Drupal\event\Service\Registration\EventRegisterService $event_registration
+   *   The event registration service.
+   * @param \Drupal\event\Service\Weather\WeatherService $weather_service
+   *   The WeatherAPI service.
    */
   public function __construct(
     DateFormatterInterface $date_formatter,
     CountryRepository $country_repository,
-    EventRegisterService  $event_registration
+    EventRegisterService  $event_registration,
+    WeatherService $weather_service
   ) {
     $this->dateFormatter = $date_formatter;
     $this->countryRepository = $country_repository;
     $this->eventRegistration = $event_registration;
+    $this->weatherService = $weather_service;
   }
 
   /**
@@ -64,7 +78,8 @@ class EventRegisterController extends ControllerBase {
     return new static(
       $container->get('date.formatter'),
       $container->get('address.country_repository'),
-      $container->get('event.registration')
+      $container->get('event.registration'),
+      $container->get('event.weather_service')
     );
   }
 
@@ -186,6 +201,25 @@ class EventRegisterController extends ControllerBase {
   }
 
   /**
+   * Gets weather data for an event.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The event node.
+   *
+   * @return array
+   *   Weather data.
+   */
+  private function getWeatherData(NodeInterface $node): array {
+    $coordinates = $node->get('field_coordinates')->value;
+
+    if (empty($coordinates)) {
+      return [];
+    }
+
+    return $this->weatherService->getWeatherFromWkt($coordinates);
+  }
+
+  /**
    * Builds the response.
    *
    * @param NodeInterface $node
@@ -207,10 +241,13 @@ class EventRegisterController extends ControllerBase {
       'coordinates' => $this->formatCoordinates($node->get('field_coordinates')->value),
     ];
 
+    $weatherData = $this->getWeatherData($node);
+
     $build = [
       '#theme' => 'event_page',
       '#attached' => ['library' => ['event/registration']],
       '#event' => $eventData,
+      '#weather' => $weatherData,
       '#is_logged_in' => $this->currentUser()->isAuthenticated(),
       '#cache' => [
         'contexts' => ['user'],
@@ -218,6 +255,7 @@ class EventRegisterController extends ControllerBase {
           'node:' . $node->id(),
           'event_registration:' . $node->id(),
         ],
+        'max-age' => 600,
       ],
     ];
 
