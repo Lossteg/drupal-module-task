@@ -15,6 +15,7 @@ function event_theme() : array {
         'registration_message' => '',
         'register_button' => '',
         'participants_link' => '',
+        'weather' => '',
       ],
     ],
     'event_participants' => [

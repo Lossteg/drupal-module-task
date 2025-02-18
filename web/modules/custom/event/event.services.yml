@@ -14,3 +14,7 @@ services:
       - '@entity_type.manager'
       - '@database'
       - '@logger.channel.cron'
+      -
+  event.weather_service:
+    class: Drupal\event\Service\Weather\WeatherService
+    arguments: ['@http_client_factory', '@config.factory']

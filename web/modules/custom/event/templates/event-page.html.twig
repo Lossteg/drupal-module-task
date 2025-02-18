@@ -46,6 +46,28 @@
       <strong>Coordinates:</strong>
       <span>{{ event.coordinates }}</span>
     </p>
+    {% if weather %}
+      <div class="weather-block">
+        <h3 class="weather-header">{{ 'Current Weather at the Event'|t }}</h3>
+        <div class="weather-data">
+          {% if weather.icon %}
+            <img src="{{ weather.icon }}" alt="{{ weather.condition }}" class="weather-icon">
+          {% endif %}
+          <div class="weather-details">
+            <div class="temperature">
+              {{ weather.temperature }}°C
+            </div>
+            <div class="condition">
+              {{ weather.condition }}
+            </div>
+            <div class="extra-info">
+              <div>{{ 'Wind:'|t }} {{ weather.wind_speed }} km/h</div>
+              <div>{{ 'Humidity:'|t }} {{ weather.humidity }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </section>
   <div class="registration-section">
     {% if is_logged_in and registration_status is same as(TRUE) %}
