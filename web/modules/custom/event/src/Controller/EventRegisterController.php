@@ -119,7 +119,7 @@ class EventRegisterController extends ControllerBase {
       return 'Coordinates are not set';
     }
 
-    if (preg_match('/POINT\(([\d.-]+) ([\d.-]+)\)/', $coordinates, $matches)) {
+    if (preg_match('/POINT \(([\d.-]+) ([\d.-]+)\)/', $coordinates, $matches)) {
       $longitude = (float)$matches[1];
       $latitude = (float)$matches[2];
 
