@@ -6,6 +6,7 @@ namespace Drupal\event\Controller;
 
 use Drupal\address\Repository\CountryRepository;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\event\Service\Registration\EventRegisterService;
 use Drupal\event\Service\Weather\WeatherService;
@@ -62,7 +63,7 @@ class EventRegisterController extends ControllerBase {
   public function __construct(
     DateFormatterInterface $date_formatter,
     CountryRepository $country_repository,
-    EventRegisterService  $event_registration,
+    EventRegisterService $event_registration,
     WeatherService $weather_service
   ) {
     $this->dateFormatter = $date_formatter;
@@ -92,8 +93,7 @@ class EventRegisterController extends ControllerBase {
    * @return string
    *   The formatted date in "d F Y H:i" format.
    */
-  private function formatDate(string $date): string
-  {
+  private function formatDate(string $date): string {
     return $this->dateFormatter->format(
       strtotime($date),
       'custom',
@@ -114,22 +114,24 @@ class EventRegisterController extends ControllerBase {
    *   A formatted string representation of the coordinates,
    *   e.g., "50.2° N, 30.5° E".
    */
-  private function formatCoordinates(string $coordinates): string {
+  private function formatCoordinates(string $coordinates): string|TranslatableMarkup {
     if (empty($coordinates)) {
-      return 'Coordinates are not set';
+      return $this->t('Coordinates are not set');
     }
 
     if (preg_match('/POINT \(([\d.-]+) ([\d.-]+)\)/', $coordinates, $matches)) {
-      $longitude = (float)$matches[1];
-      $latitude = (float)$matches[2];
+      [$longitude, $latitude] = [(float) $matches[1], (float) $matches[2]];
 
-      $longitudeDirection = $longitude >= 0 ? 'E' : 'W';
-      $latitudeDirection = $latitude >= 0 ? 'N' : 'S';
-
-      return abs($latitude) . '° ' . $latitudeDirection . ', ' . abs($longitude) . '° ' . $longitudeDirection;
+      return sprintf(
+        '%s° %s, %s° %s',
+        abs($latitude),
+        $latitude >= 0 ? 'N' : 'S',
+        abs($longitude),
+        $longitude >= 0 ? 'E' : 'W'
+      );
     }
 
-    return 'Coordinates are not available';
+    return $this->t('Coordinates are not available');
   }
 
   /**
@@ -143,16 +145,18 @@ class EventRegisterController extends ControllerBase {
    */
   private function getLocationData(NodeInterface $node): array {
     $location = $node->get('field_location')->first();
-
     $countryCode = $location->get('country_code')->getValue();
-    $countryName = $countryCode ? $this->countryRepository->get($countryCode)->getName() : '';
+
+    $countryName = $countryCode
+      ? $this->countryRepository->get($countryCode)->getName()
+      : '';
 
     return array_filter([
       'city' => $location->get('locality')->getValue(),
       'region' => $location->get('administrative_area')->getValue(),
       'address' => $location->get('address_line1')->getValue(),
       'country' => $countryName,
-    ], function ($value) {
+    ], function($value) {
       return !empty($value);
     });
   }
@@ -209,11 +213,8 @@ class EventRegisterController extends ControllerBase {
   private function getWeatherData(NodeInterface $node): array {
     $coordinates = $node->get('field_coordinates')->value;
 
-    if (empty($coordinates)) {
-      return [];
-    }
-
-    return $this->weatherService->getWeatherFromWkt($coordinates);
+    return empty($coordinates) ? [] : $this->weatherService
+      ->getWeatherFromWkt($coordinates);
   }
 
   /**
@@ -235,7 +236,9 @@ class EventRegisterController extends ControllerBase {
       'description' => $node->get('field_description')->value,
       'max_participants' => $node->get('field_maximum_participants')->value,
       'location' => $this->getLocationData($node),
-      'coordinates' => $this->formatCoordinates($node->get('field_coordinates')->value),
+      'coordinates' => $this->formatCoordinates(
+        $node->get('field_coordinates')->value
+      ),
     ];
 
     $weatherData = $this->getWeatherData($node);
@@ -258,13 +261,16 @@ class EventRegisterController extends ControllerBase {
 
     if (!$build['#is_logged_in']) {
       $build['#registration_message'] = [
-        '#markup' => $this->t('You must be logged in to register for this event.')
+        '#markup' => $this->t(
+          'You must be logged in to register for this event.'
+        ),
       ];
       return $build;
     }
 
     $userId = (int) $this->currentUser()->id();
-    $registrationStatus = $this->eventRegistration->getRegistrationStatus($node, $userId);
+    $registrationStatus = $this->eventRegistration
+      ->getRegistrationStatus($node, $userId);
 
     $build['#registration_status'] = $registrationStatus['status'];
 
@@ -272,11 +278,15 @@ class EventRegisterController extends ControllerBase {
       $build['#registration_message'] = [
         '#markup' => $registrationStatus['message'],
       ];
-    } else {
+    }
+    else {
       $build['#register_button'] = [
         '#type' => 'link',
         '#title' => $this->t('Register for event'),
-        '#url' => Url::fromRoute('event.register', ['node' => $node->id()]),
+        '#url' => Url::fromRoute(
+          'event.register',
+          ['node' => $node->id()]
+        ),
         '#attributes' => [
           'class' => ['button', 'register-event-button'],
         ],
@@ -287,7 +297,10 @@ class EventRegisterController extends ControllerBase {
       $build['#participants_link'] = [
         '#type' => 'link',
         '#title' => $this->t('View Participants'),
-        '#url' => Url::fromRoute('event.participants', ['node' => $node->id()]),
+        '#url' => Url::fromRoute(
+          'event.participants',
+          ['node' => $node->id()]
+        ),
         '#attributes' => [
           'class' => ['button', 'view-participants-button'],
         ],

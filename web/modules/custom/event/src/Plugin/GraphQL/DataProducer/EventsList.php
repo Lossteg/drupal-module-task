@@ -85,7 +85,9 @@ final class EventsList extends DataProducerPluginBase implements ContainerFactor
     }
 
     /** @var array<\Drupal\node\NodeInterface> $nodes */
-    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple($nids);
+    $nodes = $this->entityTypeManager
+      ->getStorage('node')
+      ->loadMultiple($nids);
 
     return $nodes;
   }

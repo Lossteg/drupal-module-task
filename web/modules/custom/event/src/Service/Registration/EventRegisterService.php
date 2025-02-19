@@ -93,7 +93,8 @@ final class EventRegisterService implements EventRegisterServiceInterface {
   public function isRegistrationFull(NodeInterface $event): bool {
     $maxParticipants = (int) $event->get('field_maximum_participants')->value;
 
-    $currentParticipants = $this->database->select('event_registrations', 'er')
+    $currentParticipants = $this->database
+      ->select('event_registrations', 'er')
       ->condition('er.event_id', $event->id())
       ->countQuery()
       ->execute()
@@ -113,7 +114,6 @@ final class EventRegisterService implements EventRegisterServiceInterface {
    * @return bool
    *   TRUE if user is registered, FALSE otherwise.
    */
-
   public function isUserRegistered(NodeInterface $event, int $userId): bool {
     $exists = $this->database->select('event_registrations', 'er')
       ->condition('er.event_id', $event->id())
@@ -138,7 +138,7 @@ final class EventRegisterService implements EventRegisterServiceInterface {
    *   - 'status': (bool) Can the user register?
    *   - 'message': (string) Message explaining the status.
    */
-  public function getRegistrationStatus(NodeInterface $event, int $userId) : array {
+  public function getRegistrationStatus(NodeInterface $event, int $userId): array {
     if ($event->get('field_status')->value !== 'active') {
       return [
         'status' => FALSE,
@@ -183,7 +183,7 @@ final class EventRegisterService implements EventRegisterServiceInterface {
    * @triggers cache_tags.invalidator
    *   Invalidates 'event_registration:[event_id]' cache tag on successful registration.
    */
-  public function register(NodeInterface $event) : array  {
+  public function register(NodeInterface $event): array  {
     try {
       $userId = (int)$this->currentUser->id();
 
@@ -234,7 +234,7 @@ final class EventRegisterService implements EventRegisterServiceInterface {
    * @return array
    *   Array of registered users with their details.
    */
-  public function getRegisteredUsers(NodeInterface $event) : array {
+  public function getRegisteredUsers(NodeInterface $event): array {
     $query = $this->database->select('event_registrations', 'er')
       ->fields('u', ['uid', 'name', 'mail'])
       ->fields('er', ['created'])

@@ -80,7 +80,9 @@ final class EventLoad extends DataProducerPluginBase implements ContainerFactory
       ->getStorage('node')
       ->load($id);
 
-    return ($node instanceof NodeInterface && $node->bundle() === 'event') ? $node : NULL;
+    return ($node instanceof NodeInterface && $node->bundle() === 'event')
+      ? $node
+      : NULL;
   }
 
 }

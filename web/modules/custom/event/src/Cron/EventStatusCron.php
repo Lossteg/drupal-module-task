@@ -62,7 +62,7 @@ final class EventStatusCron {
    * @return array
    *   An array of node IDs for expired events.
    */
-  protected function getExpiredEventIds() : array {
+  protected function getExpiredEventIds(): array {
     $query = $this->entityTypeManager->getStorage('node')
       ->getQuery()
       ->condition('type', 'event')
@@ -79,7 +79,7 @@ final class EventStatusCron {
    * @param \Drupal\node\NodeInterface $event
    *   The event node to update.
    */
-  protected function updateEventStatus(NodeInterface $event) : void {
+  protected function updateEventStatus(NodeInterface $event): void {
     $this->logger->info(
       'Updating event @id (current status: @status)',
       [
@@ -102,7 +102,7 @@ final class EventStatusCron {
    * @param array $event_ids
    *   Array of event node IDs to update.
    */
-  protected function updateExpiredEvents(array $event_ids) : void {
+  protected function updateExpiredEvents(array $event_ids): void {
     /** @var \Drupal\node\NodeInterface[] $events */
     $events = $this->entityTypeManager
       ->getStorage('node')
@@ -116,7 +116,7 @@ final class EventStatusCron {
   /**
    * Updates the status of expired events.
    */
-  public function run() : void {
+  public function run(): void {
     $this->logger->info(
       'Starting automatic event status update process.'
     );
