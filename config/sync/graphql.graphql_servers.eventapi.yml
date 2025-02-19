@@ -1,0 +1,16 @@
+uuid: 8d188808-2c93-4aac-a193-ac48d3757c49
+langcode: en
+status: true
+dependencies: {  }
+name: eventapi
+label: EventAPI
+endpoint: /graphql/event
+debug_flag: 0
+schema: event_schema
+caching: true
+batching: true
+disable_introspection: false
+query_depth: null
+query_complexity: null
+schema_configuration: {  }
+persisted_queries_settings: {  }
