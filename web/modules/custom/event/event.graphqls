@@ -1,0 +1,32 @@
+type Address {
+  addressLine1: String
+  locality: String
+  administrativeArea: String
+  countryCode: String
+}
+
+type Event {
+  id: Int!
+  title: String!
+  startDate: String!
+  endDate: String!
+  description: String
+  maxParticipants: Int!
+  status: String!
+  location: Address
+  coordinates: String
+}
+
+type RegisterResponse {
+  success: Boolean!
+  message: String!
+}
+
+type Query {
+  activeEvents: [Event]!
+  event(id: Int!): Event
+}
+
+type Mutation {
+  registerForEvent(eventId: Int!): RegisterResponse!
+}
