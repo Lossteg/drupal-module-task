@@ -22,7 +22,9 @@ final class EventSchema extends SdlSchemaPluginBase {
    * {@inheritdoc}
    */
   public function getSchemaDefinition(): string {
-    $module_path = \Drupal::service('extension.list.module')->getPath('event');
+    $module_path = \Drupal::service('extension.list.module')
+      ->getPath('event');
+
     $schema_path = $module_path . '/event.graphqls';
 
     if (!file_exists($schema_path)) {
@@ -88,7 +90,10 @@ final class EventSchema extends SdlSchemaPluginBase {
       $builder->produce('property_path')
         ->map('type', $builder->fromValue('entity:node'))
         ->map('value', $builder->fromParent())
-        ->map('path', $builder->fromValue('field_maximum_participants.value'))
+        ->map(
+          'path',
+          $builder->fromValue('field_maximum_participants.value')
+        )
     );
 
     $registry->addFieldResolver('Event', 'status',
@@ -100,7 +105,9 @@ final class EventSchema extends SdlSchemaPluginBase {
 
     $registry->addFieldResolver('Event', 'location',
       $builder->callback(function ($node) {
-        if (!$node->hasField('field_location') || $node->get('field_location')->isEmpty()) {
+        if (!$node->hasField('field_location')
+          || $node->get('field_location')->isEmpty()
+        ) {
           return NULL;
         }
 
@@ -109,7 +116,9 @@ final class EventSchema extends SdlSchemaPluginBase {
         return [
           'addressLine1' => $location->get('address_line1')->getValue(),
           'locality' => $location->get('locality')->getValue(),
-          'administrativeArea' => $location->get('administrative_area')->getValue(),
+          'administrativeArea' => $location
+            ->get('administrative_area')
+            ->getValue(),
           'countryCode' => $location->get('country_code')->getValue(),
         ];
       })
