@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 /*
  * Implements hook_theme().
  */
@@ -31,4 +33,21 @@ function event_theme() : array {
  */
 function event_cron() : void {
   \Drupal::service('event.event_status_cron')->run();
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page templates.
+ */
+function event_preprocess_page(&$variables): void {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  if ($route_name === 'entity.node.canonical') {
+    $node = \Drupal::routeMatch()->getParameter('node');
+
+    if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'event') {
+      $response = new RedirectResponse('/events/' . $node->id(), 301);
+      $response->send();
+      exit();
+    }
+  }
 }
