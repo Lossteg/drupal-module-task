@@ -56,9 +56,9 @@
   font-weight: normal;
 }
 
-.register-event-button {
-  display: inline-block;
-  padding: 12px 24px;
+.event-page .register-event-button {
+  display: inline-flex;
+  align-items: center;
   font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -69,11 +69,13 @@
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-.register-event-button:hover {
+.event-page .register-event-button:hover {
   background-color: #0056b3;
+  color: white;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border: transparent;
 }
-.register-event-button:active {
+.event-page .register-event-button:active {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
