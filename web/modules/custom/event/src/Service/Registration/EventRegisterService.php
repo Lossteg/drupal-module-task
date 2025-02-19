@@ -189,7 +189,10 @@ final class EventRegisterService implements EventRegisterServiceInterface {
 
       $registrationStatus = $this->getRegistrationStatus($event, $userId);
       if (!$registrationStatus['status']) {
-        return $registrationStatus['message'];
+        return [
+          'status' => FALSE,
+          'message' => $registrationStatus['message']
+        ];
       } else {
           $this->cacheTagsInvalidator->invalidateTags([
             'event_registration:' . $event->id(),
