@@ -117,7 +117,7 @@ class WeatherService implements WeatherServiceInterface {
       return [];
     }
 
-    if (preg_match('/POINT \(([\d.-]+) ([\d.-]+)\)/', $wkt, $matches)) {
+    if (preg_match('/POINT\s*\(([\d.-]+) ([\d.-]+)\)/', $wkt, $matches)) {
       $longitude = (float) $matches[1];
       $latitude = (float) $matches[2];
 
