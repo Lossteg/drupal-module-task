@@ -77,6 +77,6 @@ interface EventRegisterServiceInterface {
    *   - 'email': The user's email address.
    *   - 'registered': The formatted date and time of registration.
    */
-  public function getRegisteredUsers(NodeInterface $event) : array;
+  public function getRegisteredUsers(NodeInterface $event): array;
 
 }
