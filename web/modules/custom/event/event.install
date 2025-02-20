@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_schema().
+ */
+function event_schema() {
+  $schema['event_registrations'] = [
+    'description' => 'Stores registrations for events',
+    'fields' => [
+      'id' => [
+        'description' => 'Primary key: Unique registration ID',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ],
+      'event_id' => [
+        'description' => 'The ID of the event (node ID)',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'user_id' => [
+        'description' => 'The ID of the registered user',
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'description' => 'Timestamp when the user registered',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'event_user' => ['event_id', 'user_id'],
+    ],
+    'indexes' => [
+      'event_idx' => ['event_id'],
+      'user_idx' => ['user_id'],
+    ],
+    'foreign keys' => [
+      'event_fk' => [
+        'table' => 'node_field_data',
+        'columns' => ['event_id' => 'nid'],
+      ],
+      'user_fk' => [
+        'table' => 'users_field_data',
+        'columns' => ['user_id' => 'uid'],
+      ],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function event_uninstall() {
+  \Drupal::database()->schema()->dropTable('event_registrations');
+}

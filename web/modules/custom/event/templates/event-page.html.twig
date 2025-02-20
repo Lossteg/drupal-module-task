@@ -1,0 +1,85 @@
+<div class="event-page">
+  <header class="event-header">
+    <h1 class="event-title">
+      {{ event.title }}
+    </h1>
+    <span class="event-status {{ event.status|lower }}">
+      {{ event.status }}
+    </span>
+  </header>
+  <section class="event-details">
+    <p>
+      <strong>Start Date:</strong>
+      <span>{{ event.start_date }}</span>
+    </p>
+    <p>
+      <strong>End Date:</strong>
+      <span>{{ event.end_date }}</span>
+    </p>
+    <p>
+      <strong>Description:</strong>
+      <span>{{ event.description }}</span>
+    </p>
+    <p>
+      <strong>Maximum Participants:</strong>
+      <span>{{ event.max_participants }}</span>
+    </p>
+    <p>
+      <strong>Location:</strong>
+      <span>
+        {% set address_parts = [] %}
+
+        {% set address_parts = address_parts|merge([event.location.country]) %}
+
+        {% set address_parts = address_parts|merge([event.location.city]) %}
+
+        {% if event.location.region %}
+          {% set address_parts = address_parts|merge([event.location.region]) %}
+        {% endif %}
+
+        {% set address_parts = address_parts|merge([event.location.address]) %}
+
+        {{ address_parts|join(', ') }}
+      </span>
+    </p>
+    <p>
+      <strong>Coordinates:</strong>
+      <span>{{ event.coordinates }}</span>
+    </p>
+    {% if weather %}
+      <div class="weather-block">
+        <h3 class="weather-header">{{ 'Current Weather at the Event'|t }}</h3>
+        <div class="weather-data">
+          {% if weather.icon %}
+            <img src="{{ weather.icon }}" alt="{{ weather.condition }}" class="weather-icon">
+          {% endif %}
+          <div class="weather-details">
+            <div class="temperature">
+              {{ weather.temperature }}°C
+            </div>
+            <div class="condition">
+              {{ weather.condition }}
+            </div>
+            <div class="extra-info">
+              <div>{{ 'Wind:'|t }} {{ weather.wind_speed }} km/h</div>
+              <div>{{ 'Humidity:'|t }} {{ weather.humidity }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+  <div class="registration-section">
+    {% if is_logged_in and registration_status is same as(TRUE) %}
+      {{ register_button }}
+      <div class="registration-message" style="display: none;"></div>
+    {% else %}
+      <p class="registration-message error">{{ registration_message }}</p>
+    {% endif %}
+  </div>
+  {% if participants_link %}
+    <div class="participants-section">
+      {{ participants_link }}
+    </div>
+  {% endif %}
+</div>

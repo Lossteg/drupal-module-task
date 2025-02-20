@@ -1,0 +1,6 @@
+event.settings:
+  title: 'Event Settings'
+  description: 'Configure event module settings for Weather API.'
+  parent: system.admin_config_content
+  route_name: event.settings
+  weight: 99

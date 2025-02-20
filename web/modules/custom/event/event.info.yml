@@ -1,0 +1,5 @@
+name: 'Event'
+type: module
+description: 'Custom module for creating and managing events.'
+package: Events
+core_version_requirement: ^10 || ^11

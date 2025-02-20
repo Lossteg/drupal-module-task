@@ -63,3 +63,9 @@
 
 # Ignore JetBrains IDE configuration
 .idea
+
+# Ignore non-custom parts of Drupal
+/web/libraries
+/web/modules/contrib
+/web/profiles/contrib
+/web/themes/contrib

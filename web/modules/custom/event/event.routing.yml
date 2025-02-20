@@ -1,0 +1,53 @@
+event.event_page:
+  path: '/events/{node}'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventRegisterController::build'
+    _title: 'Event Page'
+  requirements:
+    _entity_access: 'node.view'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      bundle:
+        - event
+
+event.register:
+  path: '/events/{node}/register'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventRegisterController::register'
+    _format: 'json'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    node: \d+
+  methods: [POST]
+  options:
+    parameters:
+      node:
+        type: entity:node
+      bundle:
+        - event
+
+event.participants:
+  path: '/events/{node}/participants'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventRegisterController::getParticipants'
+    _title: 'Event Participants'
+  requirements:
+    _permission: 'access event participants'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+      bundle:
+        - event
+
+event.settings:
+  path: '/admin/config/content/event'
+  defaults:
+    _form: '\Drupal\event\Form\EventSettingsForm'
+    _title: 'Event Settings'
+  requirements:
+    _permission: 'administer site configuration'
