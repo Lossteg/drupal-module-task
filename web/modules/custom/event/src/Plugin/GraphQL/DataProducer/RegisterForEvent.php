@@ -94,6 +94,9 @@ final class RegisterForEvent extends DataProducerPluginBase implements Container
    *
    * @return array
    *   The registration result with success status and message.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function resolve(int $event_id): array {
     $node = $this->entityTypeManager

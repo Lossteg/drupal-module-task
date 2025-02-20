@@ -233,6 +233,8 @@ final class EventRegisterService implements EventRegisterServiceInterface {
    *
    * @return array
    *   Array of registered users with their details.
+   *
+   * @throws \Exception
    */
   public function getRegisteredUsers(NodeInterface $event): array {
     $query = $this->database->select('event_registrations', 'er')
