@@ -32,7 +32,7 @@ event.register:
 event.participants:
   path: '/events/{node}/participants'
   defaults:
-    _controller: '\Drupal\event\Controller\EventRegisterController::participants'
+    _controller: '\Drupal\event\Controller\EventRegisterController::getParticipants'
     _title: 'Event Participants'
   requirements:
     _permission: 'access event participants'

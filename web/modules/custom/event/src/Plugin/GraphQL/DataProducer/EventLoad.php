@@ -74,6 +74,9 @@ final class EventLoad extends DataProducerPluginBase implements ContainerFactory
    *
    * @return \Drupal\node\NodeInterface|null
    *   The event node or NULL if not found or not of event type.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function resolve(int $id): ?NodeInterface {
     $node = $this->entityTypeManager

@@ -61,6 +61,9 @@ final class EventStatusCron {
    *
    * @return array
    *   An array of node IDs for expired events.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function getExpiredEventIds(): array {
     $query = $this->entityTypeManager->getStorage('node')
@@ -78,6 +81,8 @@ final class EventStatusCron {
    *
    * @param \Drupal\node\NodeInterface $event
    *   The event node to update.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function updateEventStatus(NodeInterface $event): void {
     $this->logger->info(
@@ -101,6 +106,10 @@ final class EventStatusCron {
    *
    * @param array $event_ids
    *   Array of event node IDs to update.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function updateExpiredEvents(array $event_ids): void {
     /** @var \Drupal\node\NodeInterface[] $events */

@@ -142,6 +142,8 @@ class EventRegisterController extends ControllerBase {
    *
    * @return array
    *   Array of location data.
+   *
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   private function getLocationData(NodeInterface $node): array {
     $location = $node->get('field_location')->first();
@@ -169,6 +171,8 @@ class EventRegisterController extends ControllerBase {
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   A JSON response containing the registration status and message.
+   *
+   * @throws \Exception
    */
   public function register(NodeInterface $node): JSONResponse {
     $result = $this->eventRegistration->register($node);
@@ -184,8 +188,10 @@ class EventRegisterController extends ControllerBase {
    *
    * @return array
    *   A render array.
+   *
+   * @throws \Exception
    */
-  public function participants(NodeInterface $node): array {
+  public function getParticipants(NodeInterface $node): array {
     $participants = $this->eventRegistration->getRegisteredUsers($node);
 
     return [

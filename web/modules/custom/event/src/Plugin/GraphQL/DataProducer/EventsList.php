@@ -66,6 +66,9 @@ final class EventsList extends DataProducerPluginBase implements ContainerFactor
    *
    * @return array<\Drupal\node\NodeInterface>
    *   An array of node entities.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function resolve(): array {
     $metadata = new CacheableMetadata();
