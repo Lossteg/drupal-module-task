@@ -96,7 +96,7 @@ When creating new events, ensure the location is formatted correctly:
   - Address: 64А, ул. Челюскинцев (in Russian, house number first, then street)
   - Region: Mogilev Region (in English, optional for regional centers)
 
-Or you can generate valid Belarus addresses using: You can generate valid Belarus addresses using: https://www.generatormix.com/random-address-in-belarus?state=minsk
+Or you can generate valid Belarus addresses using: https://www.generatormix.com/random-address-in-belarus?state=minsk
 
 ## GraphQL API Testing
 
